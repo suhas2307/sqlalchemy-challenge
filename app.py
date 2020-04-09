@@ -116,7 +116,10 @@ def tobs():
 @app.route("/api/v1.0/<start>")
 @app.route("/api/v1.0/<start>/<end>")
 def temp_analyis(start,end=None):
-    start_date = dt.datetime.strptime(start,'%Y-%m-%d').date()
+    try:
+        start_date = dt.datetime.strptime(start,'%Y-%m-%d').date()
+    except:
+        return f"Enter a valid start date in the YYYY-MM-DD format"
 
     session = Session(engine)
 
@@ -128,7 +131,10 @@ def temp_analyis(start,end=None):
             .all()
         )
     else:
-        end_date = dt.datetime.strptime(end,'%Y-%m-%d').date()
+        try:
+            end_date = dt.datetime.strptime(end,'%Y-%m-%d').date()
+        except:
+            return f"Enter a valid end date in the YYYY-MM-DD format"
 
         temp_data = (session.query(Measurement.date,func.min(Measurement.tobs),func.avg(Measurement.tobs),func.max(Measurement.tobs))
             .filter(Measurement.date >= start_date,Measurement.date <= end_date)
